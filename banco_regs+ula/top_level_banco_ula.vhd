@@ -1,3 +1,6 @@
+-- Top-Level _ Banco de Registradores (08/10/2025)
+-- Gabriel Afonso Borges Caballero e Marco Vieira Busetti
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
