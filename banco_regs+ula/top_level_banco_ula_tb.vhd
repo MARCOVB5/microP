@@ -20,6 +20,7 @@ architecture a_top_level_banco_ula_tb of top_level_banco_ula_tb is
             sel_ula : in unsigned(1 downto 0);
             sel_mux_acum : in std_logic;
             sel_mux_banco : in unsigned(1 downto 0);
+            sel_mux_ula_y : in std_logic;
             constante : in unsigned(15 downto 0);
             flag_zero : out std_logic;
             flag_carry : out std_logic;
@@ -36,6 +37,7 @@ architecture a_top_level_banco_ula_tb of top_level_banco_ula_tb is
     signal sel_ula : unsigned(1 downto 0);
     signal sel_mux_acum : std_logic;
     signal sel_mux_banco : unsigned(1 downto 0);
+    signal sel_mux_ula_y : std_logic;
     signal constante : unsigned(15 downto 0);
     signal flag_zero, flag_carry : std_logic;
     signal data_out_acum, data_out_banco : unsigned(15 downto 0);
@@ -51,6 +53,7 @@ begin
         sel_ula=>sel_ula,
         sel_mux_acum=>sel_mux_acum,
         sel_mux_banco=>sel_mux_banco,
+        sel_mux_ula_y=>sel_mux_ula_y,
         constante=>constante,
         flag_zero=>flag_zero,
         flag_carry=>flag_carry,
@@ -92,6 +95,7 @@ begin
         wr_en_acum <= '0';
         sel_reg_wr <= "000";
         sel_mux_banco <= "01";
+        sel_mux_ula_y <= '0';
         constante <= "0000000000000101";
         sel_mux_acum <= '0';
         wait for 100 ns;
@@ -110,16 +114,19 @@ begin
         wr_en_acum <= '1';
         sel_reg_rd <= "000";
         sel_mux_acum <= '1';
+        sel_mux_ula_y <= '0';
         wait for 100 ns;
         
         wr_en_acum <= '1';
         sel_reg_rd <= "001";
         sel_ula <= "00";
         sel_mux_acum <= '0';
+        sel_mux_ula_y <= '0';
         wait for 100 ns;
         
         wr_en_acum <= '1';
-        sel_reg_rd <= "010";
+        sel_mux_ula_y <= '1';
+        constante <= "0000000000000011";
         sel_ula <= "00";
         sel_mux_acum <= '0';
         wait for 100 ns;
@@ -128,6 +135,7 @@ begin
         wr_en_acum <= '0';
         sel_reg_wr <= "011";
         sel_mux_banco <= "00";
+        sel_mux_ula_y <= '0';
         wait for 100 ns;
         
         wr_en_banco <= '0';
@@ -135,6 +143,7 @@ begin
         sel_reg_rd <= "011";
         sel_ula <= "01";
         sel_mux_acum <= '0';
+        sel_mux_ula_y <= '0';
         wait for 100 ns;
         
         wr_en_banco <= '1';
@@ -148,12 +157,14 @@ begin
         sel_reg_rd <= "000";
         sel_ula <= "10";
         sel_mux_acum <= '0';
+        sel_mux_ula_y <= '0';
         wait for 100 ns;
         
         wr_en_acum <= '1';
         sel_reg_rd <= "001";
         sel_ula <= "11";
         sel_mux_acum <= '0';
+        sel_mux_ula_y <= '0';
         wait for 100 ns;
         
         wait;
