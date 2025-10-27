@@ -20,10 +20,10 @@ JMP 20
 F:
 LI R5, 0      ; nunca será executada
 
-...           ; NOPs (Endereços 10-19)
+...           ; NOPs (endereços 10-19)
 
 G:
-MOV A, R5     ; Endereço 20
+MOV A, R5     ; endereço 20 
 MOV R3, A
 
 H:

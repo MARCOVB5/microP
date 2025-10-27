@@ -18,12 +18,10 @@ architecture a_processador_tb of processador_tb is
         );
     end component;
     
-    -- Sinais do Testbench
-    constant period_time : time := 10 ns; -- Clock de 100 MHz
+    constant period_time : time := 10 ns;
     signal finished      : std_logic := '0';
     signal clk_s, rst_s  : std_logic;
     
-    -- Sinais de debug (para ver no gtkwave)
     signal estado_s      : unsigned(1 downto 0);
     signal pc_s          : unsigned(6 downto 0);
     signal instr_s       : unsigned(14 downto 0);
@@ -31,7 +29,6 @@ architecture a_processador_tb of processador_tb is
     signal banco_s       : unsigned(15 downto 0);
     
 begin
-    -- Instanciação do Processador (UUT - Unit Under Test)
     uut: processador port map(
         clk             => clk_s,
         rst             => rst_s,
@@ -42,7 +39,6 @@ begin
         banco_out_debug => banco_s
     );
 
-    -- Processo de Reset Global
     reset_global: process
     begin
         rst_s <= '1';
@@ -51,15 +47,13 @@ begin
         wait;
     end process;
     
-    -- Processo de Tempo de Simulação
     sim_time_proc: process
     begin
-        wait for 5 us; -- Tempo total da simulação
+        wait for 5 us;
         finished <= '1';
         wait;
     end process sim_time_proc;
     
-    -- Processo de Clock
     clk_proc: process
     begin
         while finished /= '1' loop
@@ -70,7 +64,5 @@ begin
         end loop;
         wait;
     end process clk_proc;
-    
-    -- (Não há processo de estímulo, pois o programa está na ROM)
 
 end architecture;
