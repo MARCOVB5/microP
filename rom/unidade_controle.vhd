@@ -144,6 +144,6 @@ begin
                "00"; -- Default
 
     -- Constante: Estende 8 bits da instrução para 16 bits (zero-extend)
-    constante_out <= "00000000" & const_8_s;
+    constante_out <= unsigned(resize(signed(const_8_s), 16));
 
 end architecture;
