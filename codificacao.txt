@@ -1,0 +1,17 @@
+         MSB b14         b0 LSB
+          |                |
+NOP:      0000 --- --- -----
+LI:       0001 ddd cccccccc
+MOV A,R:  0010 --- sss -----
+MOV R,A:  0011 ddd --- -----
+ADD A,R:  0100 --- sss -----
+ADDI A,C: 0101 --- cccccccc
+SUB A,R:  0110 --- sss -----
+JMP:      1111 aaaaaaa ----
+
+onde
+  ddd identifica o registrador destino
+  sss identifica o registrador fonte
+  cccccccc identifica a constante de 8 bits
+  aaaaaaa identifica o endereço de 7 bits
+  --- é irrelevante

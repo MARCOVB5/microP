@@ -1,0 +1,34 @@
+A:
+LI R3, 5
+
+B:
+LI R4, 8
+LI R6, 1      ; constante 1 para subtracao
+
+C:
+MOV A, R3
+ADD A, R4
+MOV R5, A
+
+D:
+MOV A, R5
+SUB A, R6
+MOV R5, A
+
+E:
+JMP 20
+
+F:
+LI R5, 0      ; nunca será executada
+
+...           ; NOPs (Endereços 10-19)
+
+G:
+MOV A, R5     ; Endereço 20
+MOV R3, A
+
+H:
+JMP 3         ; Salta para C
+
+I:
+LI R3, 0      ; nunca será executada
