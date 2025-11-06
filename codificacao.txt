@@ -7,6 +7,9 @@ MOV R,A:  0011 ddd --- -----
 ADD A,R:  0100 --- sss -----
 ADDI A,C: 0101 --- cccccccc
 SUB A,R:  0110 --- sss -----
+CMPR A,R: 1000 --- sss -----
+BLE C:    1001 --- cccccccc
+BVS C:    1010 --- cccccccc
 JMP:      1111 aaaaaaa ----
 
 onde

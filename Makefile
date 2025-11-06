@@ -13,9 +13,9 @@ WAVE_VIEWER = gtkwave
 TOP_LEVEL = processador_tb
 
 # Arquivos de saída
-WAVE_FILE = lab5.ghw
+WAVE_FILE = lab6.ghw
 # Arquivo de configuração do GTKWave (para salvar seus sinais)
-SAVE_FILE = lab5.gtkw
+SAVE_FILE = lab6.gtkw
 
 # --- Diretórios do Projeto ---
 DIR_DATAPATH = banco_regs+ula
@@ -31,6 +31,7 @@ all: run
 compile:
 	@echo "== 1. Compilando Componentes Base (Datapath) =="
 	$(GHDL) -a $(GHDL_FLAGS) $(DIR_DATAPATH)/reg16bits.vhd
+	$(GHDL) -a $(GHDL_FLAGS) $(DIR_DATAPATH)/flags.vhd
 	$(GHDL) -a $(GHDL_FLAGS) $(DIR_DATAPATH)/ula.vhd
 	$(GHDL) -a $(GHDL_FLAGS) $(DIR_DATAPATH)/banco_registradores.vhd
 	$(GHDL) -a $(GHDL_FLAGS) $(DIR_DATAPATH)/top_level_banco_ula.vhd

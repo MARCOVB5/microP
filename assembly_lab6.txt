@@ -1,0 +1,24 @@
+A:
+LI R3, 0
+
+B:
+LI R4, 0
+LI R0, 29
+
+C:
+MOV A, R3
+ADD A, R4
+MOV R4, A
+
+D:
+MOV A, R3
+ADDI A, 1
+MOV R3, A
+
+E:
+CMPR A, R0
+BLE -8
+
+F:
+MOV A, R4
+MOV R5, A

@@ -21,12 +21,19 @@ architecture a_processador of processador is
             clk           : in std_logic;
             rst           : in std_logic;
             instr_in      : in unsigned(14 downto 0);
+
+            flag_z_in     : in std_logic;
+            flag_c_in     : in std_logic;
+            flag_v_in     : in std_logic;
+            flag_n_in     : in std_logic;
+            
             pc_out        : out unsigned(6 downto 0);
             estado_out    : out unsigned(1 downto 0);
             wr_en_pc      : out std_logic;
             wr_en_ri      : out std_logic;
             wr_en_banco   : out std_logic;
             wr_en_acum    : out std_logic;
+            wr_en_flags   : out std_logic;
             sel_reg_rd    : out unsigned(2 downto 0);
             sel_reg_wr    : out unsigned(2 downto 0);
             sel_ula       : out unsigned(1 downto 0);
@@ -61,6 +68,7 @@ architecture a_processador of processador is
             rst             : in std_logic;
             wr_en_banco     : in std_logic;
             wr_en_acum      : in std_logic;
+            wr_en_flags     : in std_logic;
             sel_reg_rd      : in unsigned(2 downto 0);
             sel_reg_wr      : in unsigned(2 downto 0);
             sel_ula         : in unsigned(1 downto 0);
@@ -70,6 +78,8 @@ architecture a_processador of processador is
             constante       : in unsigned(15 downto 0);
             flag_zero       : out std_logic;
             flag_carry      : out std_logic;
+            flag_overflow   : out std_logic;
+            flag_negative   : out std_logic;
             data_out_acum   : out unsigned(15 downto 0);
             data_out_banco  : out unsigned(15 downto 0)
         );
@@ -84,6 +94,7 @@ architecture a_processador of processador is
     signal s_wr_en_ri      : std_logic;
     signal s_wr_en_banco   : std_logic;
     signal s_wr_en_acum    : std_logic;
+    signal s_wr_en_flags   : std_logic;
     
     signal s_sel_reg_rd    : unsigned(2 downto 0);
     signal s_sel_reg_wr    : unsigned(2 downto 0);
@@ -93,17 +104,26 @@ architecture a_processador of processador is
     signal s_sel_mux_ula_y : std_logic;
     signal s_constante     : unsigned(15 downto 0);
 
+    signal s_flag_z, s_flag_c, s_flag_v, s_flag_n : std_logic;
+    
 begin
     uc_inst: unidade_controle port map(
         clk           => clk,
         rst           => rst,
         instr_in      => s_instr_15bit,
+
+        flag_z_in     => s_flag_z,
+        flag_c_in     => s_flag_c,
+        flag_v_in     => s_flag_v,
+        flag_n_in     => s_flag_n,
+        
         pc_out        => s_pc_out,
         estado_out    => estado_out,
         wr_en_pc      => s_wr_en_pc,
         wr_en_ri      => s_wr_en_ri,
         wr_en_banco   => s_wr_en_banco,
         wr_en_acum    => s_wr_en_acum,
+        wr_en_flags   => s_wr_en_flags,
         sel_reg_rd    => s_sel_reg_rd,
         sel_reg_wr    => s_sel_reg_wr,
         sel_ula       => s_sel_ula,
@@ -135,6 +155,7 @@ begin
         rst             => rst,
         wr_en_banco     => s_wr_en_banco,
         wr_en_acum      => s_wr_en_acum,
+        wr_en_flags     => s_wr_en_flags,
         sel_reg_rd      => s_sel_reg_rd,
         sel_reg_wr      => s_sel_reg_wr,
         sel_ula         => s_sel_ula,
@@ -142,6 +163,11 @@ begin
         sel_mux_banco   => s_sel_mux_banco,
         sel_mux_ula_y   => s_sel_mux_ula_y,
         constante       => s_constante,
+        flag_zero       => s_flag_z,
+        flag_carry      => s_flag_c,
+        flag_overflow   => s_flag_v,
+        flag_negative   => s_flag_n,
+        
         data_out_acum   => acum_out_debug,
         data_out_banco  => banco_out_debug
     );
