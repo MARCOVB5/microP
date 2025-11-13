@@ -1,0 +1,33 @@
+A:
+LI R3, 5
+
+B:
+LI R4, 8
+
+C:
+MOV A, R3
+ADD A, R4
+MOV R5, A
+
+D:
+MOV A, R5
+ADDI A, -1
+MOV R5, A
+
+E:
+JMP 20
+
+F:
+LI R5, 0      ; nunca será executada
+
+...           ; NOPs (endereços 10-19)
+
+G:
+MOV A, R5     ; endereço 20 
+MOV R3, A
+
+H:
+JMP 2         ; Salta para C
+
+I:
+LI R3, 0      ; nunca será executada

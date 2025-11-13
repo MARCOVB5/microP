@@ -37,9 +37,10 @@ architecture a_processador of processador is
             sel_reg_rd    : out unsigned(2 downto 0);
             sel_reg_wr    : out unsigned(2 downto 0);
             sel_ula       : out unsigned(1 downto 0);
-            sel_mux_acum  : out std_logic;
+            sel_mux_acum  : out unsigned(1 downto 0);
             sel_mux_banco : out unsigned(1 downto 0);
             sel_mux_ula_y : out std_logic;
+            wr_en_ram     : out std_logic;
             constante_out : out unsigned(15 downto 0)
         );
     end component;
@@ -72,16 +73,27 @@ architecture a_processador of processador is
             sel_reg_rd      : in unsigned(2 downto 0);
             sel_reg_wr      : in unsigned(2 downto 0);
             sel_ula         : in unsigned(1 downto 0);
-            sel_mux_acum    : in std_logic;
+            sel_mux_acum    : in unsigned(1 downto 0);
             sel_mux_banco   : in unsigned(1 downto 0);
             sel_mux_ula_y   : in std_logic;
             constante       : in unsigned(15 downto 0);
+            data_from_ram_in : in unsigned(15 downto 0);
             flag_zero       : out std_logic;
             flag_carry      : out std_logic;
             flag_overflow   : out std_logic;
             flag_negative   : out std_logic;
             data_out_acum   : out unsigned(15 downto 0);
             data_out_banco  : out unsigned(15 downto 0)
+        );
+    end component;
+
+    component ram is
+        port(
+            clk      : in std_logic;
+            endereco : in unsigned (6 downto 0);
+            wr_en    : in std_logic;
+            dado_in  : in unsigned (15 downto 0);
+            dado_out : out unsigned (15 downto 0)
         );
     end component;
 
@@ -99,12 +111,18 @@ architecture a_processador of processador is
     signal s_sel_reg_rd    : unsigned(2 downto 0);
     signal s_sel_reg_wr    : unsigned(2 downto 0);
     signal s_sel_ula       : unsigned(1 downto 0);
-    signal s_sel_mux_acum  : std_logic;
+    signal s_sel_mux_acum  : unsigned(1 downto 0);
     signal s_sel_mux_banco : unsigned(1 downto 0);
     signal s_sel_mux_ula_y : std_logic;
     signal s_constante     : unsigned(15 downto 0);
 
     signal s_flag_z, s_flag_c, s_flag_v, s_flag_n : std_logic;
+
+    -- sinais para a RAM
+    signal s_ram_wr_en     : std_logic;
+    signal s_ram_out       : unsigned(15 downto 0);
+    signal s_acum_out      : unsigned(15 downto 0);
+    signal s_banco_out     : unsigned(15 downto 0);
     
 begin
     uc_inst: unidade_controle port map(
@@ -130,6 +148,7 @@ begin
         sel_mux_acum  => s_sel_mux_acum,
         sel_mux_banco => s_sel_mux_banco,
         sel_mux_ula_y => s_sel_mux_ula_y,
+        wr_en_ram     => s_ram_wr_en,
         constante_out => s_constante
     );
 
@@ -145,6 +164,14 @@ begin
         wr_en    => s_wr_en_ri,
         data_in  => '0' & s_rom_dado,
         data_out => s_ri_out
+    );
+
+    ram_inst: ram port map(
+        clk      => clk,
+        wr_en    => s_ram_wr_en,
+        endereco => s_banco_out(6 downto 0),
+        dado_in  => s_acum_out,
+        dado_out => s_ram_out
     );
     
     -- converte a saída de 16 bits do RI de volta para 15 bits para a UC
@@ -163,6 +190,7 @@ begin
         sel_mux_banco   => s_sel_mux_banco,
         sel_mux_ula_y   => s_sel_mux_ula_y,
         constante       => s_constante,
+        data_from_ram_in => s_ram_out,
         flag_zero       => s_flag_z,
         flag_carry      => s_flag_c,
         flag_overflow   => s_flag_v,
@@ -174,5 +202,9 @@ begin
 
     pc_debug    <= s_pc_out;
     instr_debug <= s_instr_15bit;
+
+    -- conecta saídas do datapath pra entradas da RAM
+    s_acum_out  <= acum_out_debug;
+    s_banco_out <= banco_out_debug;
 
 end architecture;

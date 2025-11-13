@@ -15,10 +15,11 @@ entity top_level_banco_ula is
         sel_reg_rd : in unsigned(2 downto 0);
         sel_reg_wr : in unsigned(2 downto 0);
         sel_ula : in unsigned(1 downto 0);
-        sel_mux_acum : in std_logic;
+        sel_mux_acum : in unsigned(1 downto 0);
         sel_mux_banco : in unsigned(1 downto 0);
         sel_mux_ula_y : in std_logic;
         constante : in unsigned(15 downto 0);
+        data_from_ram_in : in unsigned(15 downto 0);
 
         flag_zero : out std_logic;
         flag_carry : out std_logic;
@@ -129,7 +130,8 @@ begin
     entrada_ula_y <= constante when sel_mux_ula_y='1' else
                      data_banco_out;
     
-    entrada_acum <= data_banco_out when sel_mux_acum='1' else
+    entrada_acum <= data_banco_out when sel_mux_acum="01" else
+                    data_from_ram_in when sel_mux_acum="10" else
                     saida_ula;
     
     entrada_banco <= data_acum when sel_mux_banco="00" else

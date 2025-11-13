@@ -24,9 +24,10 @@ entity unidade_controle is
         sel_reg_rd    : out unsigned(2 downto 0);
         sel_reg_wr    : out unsigned(2 downto 0);
         sel_ula       : out unsigned(1 downto 0);
-        sel_mux_acum  : out std_logic;
+        sel_mux_acum  : out unsigned(1 downto 0);
         sel_mux_banco : out unsigned(1 downto 0);
         sel_mux_ula_y : out std_logic;
+        wr_en_ram     : out std_logic;
         constante_out : out unsigned(15 downto 0)
     );
 end entity;
@@ -62,6 +63,7 @@ architecture a_unidade_controle of unidade_controle is
 
     signal nop_en, jump_en, li_en, mov_ar_en, mov_ra_en, add_ar_en, addi_ac_en, sub_ar_en : std_logic;
     signal cmpr_en, ble_en, bvs_en : std_logic;
+    signal lw_en, sw_en : std_logic;
     
     -- sinais para branch relativo
     signal offset_s             : signed(7 downto 0);
@@ -101,6 +103,9 @@ begin
     cmpr_en    <= '1' when opcode = "1000" else '0';
     ble_en     <= '1' when opcode = "1001" else '0';
     bvs_en     <= '1' when opcode = "1010" else '0';
+
+    lw_en      <= '1' when opcode = "1100" else '0';
+    sw_en      <= '1' when opcode = "1101" else '0';
     
     jump_en    <= '1' when opcode = "1111" else '0';
 
@@ -133,21 +138,28 @@ begin
     -- write enables
     wr_en_banco <= '1' when (estado_s = "10" and (li_en = '1' or mov_ra_en = '1') and nop_en = '0') else '0';
     
-    wr_en_acum  <= '1' when (estado_s = "10" and (mov_ar_en = '1' or add_ar_en = '1' or addi_ac_en = '1' or sub_ar_en = '1') and nop_en = '0' and cmpr_en = '0') else '0';
+    wr_en_acum  <= '1' when (estado_s = "10" and (mov_ar_en = '1' or add_ar_en = '1' or addi_ac_en = '1' or sub_ar_en = '1') and nop_en = '0' and cmpr_en = '0') else
+                 '1' when (estado_s = "11" and lw_en = '1') else
+                 '0';
 
     wr_en_flags <= '1' when (estado_s = "10" and (add_ar_en = '1' or addi_ac_en = '1' or sub_ar_en = '1' or cmpr_en = '1')) else '0';
 
+    wr_en_ram <= '1' when (estado_s = "11" and sw_en = '1') else '0';
+
     -- seleção de registradores
     sel_reg_wr <= reg_dest_s when (estado_s = "10" and (li_en = '1' or mov_ra_en = '1')) else "000";
-    sel_reg_rd <= reg_font_s when (estado_s = "10" and (mov_ar_en = '1' or add_ar_en = '1' or sub_ar_en = '1' or cmpr_en = '1')) else "000";
+    sel_reg_rd <= reg_font_s when (estado_s = "10" and (mov_ar_en = '1' or add_ar_en = '1' or sub_ar_en = '1' or cmpr_en = '1' or lw_en = '1' or sw_en = '1')) else
+                reg_font_s when (estado_s = "11" and (lw_en = '1' or sw_en = '1')) else
+                "000";
 
     -- seleção dos muxes
     sel_mux_banco <= "01" when (estado_s = "10" and li_en = '1') else
                      "00" when (estado_s = "10" and mov_ra_en = '1') else
                      "00";
     
-    sel_mux_acum <= '1' when (estado_s = "10" and mov_ar_en = '1') else
-                    '0';
+    sel_mux_acum <= "01" when (estado_s = "10" and mov_ar_en = '1') else
+                    "10" when (estado_s = "11" and lw_en = '1') else
+                    "00";
     
     sel_mux_ula_y <= '1' when (estado_s = "10" and addi_ac_en = '1') else
                      '0';

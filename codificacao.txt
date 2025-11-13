@@ -10,6 +10,8 @@ SUB A,R:  0110 --- sss -----
 CMPR A,R: 1000 --- sss -----
 BLE C:    1001 --- cccccccc
 BVS C:    1010 --- cccccccc
+LW (R):   1100 --- sss -----
+SW (R):   1101 --- sss -----
 JMP:      1111 aaaaaaa ----
 
 onde
