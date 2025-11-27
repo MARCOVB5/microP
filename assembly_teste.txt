@@ -1,0 +1,43 @@
+; teste de carga e movimentação
+NOP
+LI R0, 5
+LI R1, 2
+MOV A, R0
+
+; teste aritmético
+ADD A, R1
+MOV R2, A
+ADDI A, 3
+SUB A, R1
+
+; teste lógico
+AND A, R1
+LI R0, 7
+MOV A, R0
+AND A, R1
+
+; teste de memória
+LI R4, 50
+SW (R4)
+LI R0, 0
+MOV A, R0
+LW (R4)
+MOV R5, A
+
+; teste de comparação e branch
+LI R0, 5
+MOV A, R0
+CMPR A, R1
+BLE +2
+
+JMP 24
+LI R5, 255
+
+CMPR A, R2
+BLE +2
+LI R5, 255
+
+NOP
+BVS +0
+
+HALT

@@ -41,6 +41,7 @@ compile:
 	$(GHDL) -a $(GHDL_FLAGS) $(DIR_CONTROL)/pc.vhd
 	$(GHDL) -a $(GHDL_FLAGS) $(DIR_CONTROL)/maq_estados.vhd
 	$(GHDL) -a $(GHDL_FLAGS) $(DIR_CONTROL)/rom.vhd
+	$(GHDL) -a $(GHDL_FLAGS) $(DIR_CONTROL)/rom_teste.vhd
 	$(GHDL) -a $(GHDL_FLAGS) $(DIR_CONTROL)/unidade_controle.vhd
 	
 	@echo "== 3. Compilando Top-Level (Processador) =="

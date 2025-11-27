@@ -11,7 +11,8 @@ entity processador is
         pc_debug       : out unsigned(6 downto 0);
         instr_debug    : out unsigned(14 downto 0);
         acum_out_debug : out unsigned(15 downto 0);
-        banco_out_debug: out unsigned(15 downto 0)
+        banco_out_debug: out unsigned(15 downto 0);
+        halted         : out std_logic
     );
 end entity;
 
@@ -41,7 +42,8 @@ architecture a_processador of processador is
             sel_mux_banco : out unsigned(1 downto 0);
             sel_mux_ula_y : out std_logic;
             wr_en_ram     : out std_logic;
-            constante_out : out unsigned(15 downto 0)
+            constante_out : out unsigned(15 downto 0);
+            halted        : out std_logic
         );
     end component;
 
@@ -90,10 +92,10 @@ architecture a_processador of processador is
     component ram is
         port(
             clk      : in std_logic;
-            endereco : in unsigned (6 downto 0);
+            endereco : in unsigned(6 downto 0);
             wr_en    : in std_logic;
-            dado_in  : in unsigned (15 downto 0);
-            dado_out : out unsigned (15 downto 0)
+            dado_in  : in unsigned(15 downto 0);
+            dado_out : out unsigned(15 downto 0)
         );
     end component;
 
@@ -101,29 +103,32 @@ architecture a_processador of processador is
     signal s_rom_dado      : unsigned(14 downto 0);
     signal s_ri_out        : unsigned(15 downto 0);
     signal s_instr_15bit   : unsigned(14 downto 0);
-    
+
     signal s_wr_en_pc      : std_logic;
     signal s_wr_en_ri      : std_logic;
     signal s_wr_en_banco   : std_logic;
     signal s_wr_en_acum    : std_logic;
     signal s_wr_en_flags   : std_logic;
-    
+    signal s_sel_mux_ula_y : std_logic;
+    signal s_ram_wr_en     : std_logic;
+
     signal s_sel_reg_rd    : unsigned(2 downto 0);
     signal s_sel_reg_wr    : unsigned(2 downto 0);
+
     signal s_sel_ula       : unsigned(1 downto 0);
     signal s_sel_mux_acum  : unsigned(1 downto 0);
     signal s_sel_mux_banco : unsigned(1 downto 0);
-    signal s_sel_mux_ula_y : std_logic;
+
     signal s_constante     : unsigned(15 downto 0);
-
-    signal s_flag_z, s_flag_c, s_flag_v, s_flag_n : std_logic;
-
-    -- sinais para a RAM
-    signal s_ram_wr_en     : std_logic;
     signal s_ram_out       : unsigned(15 downto 0);
     signal s_acum_out      : unsigned(15 downto 0);
     signal s_banco_out     : unsigned(15 downto 0);
-    
+
+    signal s_flag_z        : std_logic;
+    signal s_flag_c        : std_logic;
+    signal s_flag_v        : std_logic;
+    signal s_flag_n        : std_logic;
+
 begin
     uc_inst: unidade_controle port map(
         clk           => clk,
@@ -149,10 +154,13 @@ begin
         sel_mux_banco => s_sel_mux_banco,
         sel_mux_ula_y => s_sel_mux_ula_y,
         wr_en_ram     => s_ram_wr_en,
-        constante_out => s_constante
+        constante_out => s_constante,
+        halted        => halted
     );
 
-    rom_inst: rom port map(
+    -- mudar entre rom (crivo) e rom_teste (teste de todas as instruções)
+    rom_inst: entity work.rom
+    port map(
         clk      => clk,
         endereco => s_pc_out,
         dado     => s_rom_dado

@@ -7,11 +7,13 @@ MOV R,A:  0011 ddd --- -----
 ADD A,R:  0100 --- sss -----
 ADDI A,C: 0101 --- cccccccc
 SUB A,R:  0110 --- sss -----
+AND A,R:  0111 --- sss -----
 CMPR A,R: 1000 --- sss -----
 BLE C:    1001 --- cccccccc
 BVS C:    1010 --- cccccccc
 LW (R):   1100 --- sss -----
 SW (R):   1101 --- sss -----
+HALT:     1110 --- --- -----
 JMP:      1111 aaaaaaa ----
 
 onde

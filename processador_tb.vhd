@@ -14,7 +14,8 @@ architecture a_processador_tb of processador_tb is
             pc_debug       : out unsigned(6 downto 0);
             instr_debug    : out unsigned(14 downto 0);
             acum_out_debug : out unsigned(15 downto 0);
-            banco_out_debug: out unsigned(15 downto 0)
+            banco_out_debug: out unsigned(15 downto 0);
+            halted         : out std_logic
         );
     end component;
     
@@ -27,6 +28,7 @@ architecture a_processador_tb of processador_tb is
     signal instr_s       : unsigned(14 downto 0);
     signal acum_s        : unsigned(15 downto 0);
     signal banco_s       : unsigned(15 downto 0);
+    signal halted_s      : std_logic;
     
 begin
     uut: processador port map(
@@ -36,7 +38,8 @@ begin
         pc_debug        => pc_s,
         instr_debug     => instr_s,
         acum_out_debug  => acum_s,
-        banco_out_debug => banco_s
+        banco_out_debug => banco_s,
+        halted          => halted_s
     );
 
     reset_global: process
@@ -49,7 +52,12 @@ begin
     
     sim_time_proc: process
     begin
-        wait for 10 us;
+        wait until halted_s = '1' for 50 us;
+        
+        if halted_s = '1' then
+            wait for period_time*4;
+        end if;
+        
         finished <= '1';
         wait;
     end process sim_time_proc;
